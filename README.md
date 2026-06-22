@@ -2,6 +2,12 @@
 
 長期保有向けの高配当株候補を、利回りだけでなく配当持続性・増配力・財務健全性・収益安定性・割安度から確認する、日本語のフロントエンドMVPです。
 
+<p align="center">
+  <a href="https://ooken-korekara.github.io/dividend-compass/">
+    <img src="https://img.shields.io/badge/%E2%96%B6_%E3%82%A2%E3%83%97%E3%83%AA%E3%82%92%E8%B5%B7%E5%8B%95-164F3D?style=for-the-badge" alt="Dividend Compassを起動する">
+  </a>
+</p>
+
 ## 起動方法
 
 依存パッケージはありません。`index.html` をブラウザで開くか、ローカルサーバーを起動してください。
