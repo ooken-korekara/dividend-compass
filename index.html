@@ -60,6 +60,23 @@
           </div>
         </div>
 
+        <section class="external-search-card" aria-labelledby="irbankSearchTitle">
+          <div class="external-search-copy">
+            <span class="source-badge">IR BANK</span>
+            <div>
+              <h2 id="irbankSearchTitle">実在する企業を調べる</h2>
+              <p>証券コードまたは社名から、IR BANKの企業情報を検索します。</p>
+            </div>
+          </div>
+          <form class="external-search-form" action="https://irbank.net/search" method="get" target="_blank" rel="noopener external">
+            <label class="sr-only" for="irbankQuery">証券コード、社名</label>
+            <span aria-hidden="true">⌕</span>
+            <input id="irbankQuery" name="query" type="search" placeholder="例：7203、トヨタ自動車" autocomplete="off" required />
+            <button type="submit">IR BANKで検索 <b aria-hidden="true">↗</b></button>
+          </form>
+          <p class="external-search-note">検索結果は外部サイトで開きます。掲載情報の利用条件はIR BANKに準じます。</p>
+        </section>
+
         <div class="metric-grid" id="metricGrid"></div>
 
         <div class="research-layout">
@@ -69,8 +86,8 @@
               <button class="text-button" id="resetFilters">リセット</button>
             </div>
 
-            <label class="field-label" for="searchInput">銘柄名・コード</label>
-            <div class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="例：4072、東海通信" autocomplete="off" /></div>
+            <label class="field-label" for="searchInput">デモ銘柄を絞り込み</label>
+            <div class="search-box"><span>⌕</span><input id="searchInput" type="search" placeholder="架空の社名・コード" autocomplete="off" /></div>
 
             <div class="filter-group">
               <div class="field-row"><label for="yieldRange">配当利回り</label><output id="yieldOutput">3.0%以上</output></div>

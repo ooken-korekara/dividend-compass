@@ -21,6 +21,7 @@ python3 -m http.server 8000
 ## 主な機能
 
 - 高配当株スクリーニング
+- IR BANKで証券コード・社名検索
 - 独自の5軸・100点評価
 - 銘柄詳細とリスク表示
 - ウォッチリスト（ブラウザ内に保存）
@@ -30,6 +31,8 @@ python3 -m http.server 8000
 ## データについて
 
 現在の全銘柄・指標はUI検証用の架空データです。実際の投資判断には使用できません。実運用時は、財務・株価・配当履歴の正規データをバックエンドで取得し、更新日と出典を各指標に表示してください。
+
+「実在する企業を調べる」検索は、入力した証券コードまたは社名を [IR BANK](https://irbank.net/) の検索結果へ送信します。IR BANKのデータを本リポジトリへ複製・保存する機能ではありません。
 
 実データ化の第一候補は、JPX公式の [J-Quants API](https://www.jpx.co.jp/markets/other-data-services/j-quants-api/index.html) です。上場銘柄一覧、調整済み株価、四半期財務、配当の決定・予想をまとめて取得できます。より長期の開示書類を検証する場合は、金融庁の [EDINET API](https://disclosure2dl.edinet-fsa.go.jp/guide/static/disclosure/WZEK0110.html) を補助データ源にします。減配・増配など最新の会社発表を追う用途では、JPXの [TDnet](https://www.jpx.co.jp/equities/listing/disclosure/tdnet/index.html) を併用します。
 
