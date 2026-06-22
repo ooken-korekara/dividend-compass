@@ -31,6 +31,7 @@ function init() {
   renderStocks();
   renderWatchlist();
   calculateSimulation();
+  if (window.initAnalysis) window.initAnalysis();
 }
 
 function bindEvents() {

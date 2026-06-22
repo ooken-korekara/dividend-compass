@@ -19,6 +19,7 @@
 
       <nav aria-label="メインナビゲーション">
         <button class="nav-item active" data-view="research"><span class="nav-icon">⌁</span>銘柄を探す</button>
+        <button class="nav-item" data-view="analysis"><span class="nav-icon">◈</span>実データ分析</button>
         <button class="nav-item" data-view="watchlist"><span class="nav-icon">♡</span>ウォッチリスト <span id="watchCount" class="nav-count">0</span></button>
         <button class="nav-item" data-view="simulator"><span class="nav-icon">↗</span>配当シミュレーター</button>
       </nav>
@@ -31,14 +32,14 @@
 
       <div class="sidebar-footer">
         <span class="status-dot"></span>
-        <span><b>デモモード</b><small>架空のサンプルデータ</small></span>
+        <span><b id="dataModeLabel">接続確認中</b><small id="dataModeDetail">J-Quants API</small></span>
       </div>
     </aside>
 
     <main>
       <header class="topbar">
         <button class="menu-button" id="menuButton" aria-label="メニューを開く">☰</button>
-        <div class="market-status"><span class="status-dot"></span>日本株デモデータ</div>
+        <div class="market-status"><span class="status-dot"></span><span id="marketStatusText">日本株デモデータ</span></div>
         <div class="topbar-actions">
           <button class="icon-button" id="themeButton" aria-label="表示テーマを切り替える">◐</button>
           <button class="avatar" aria-label="プロフィール">投</button>
@@ -60,21 +61,21 @@
           </div>
         </div>
 
-        <section class="external-search-card" aria-labelledby="irbankSearchTitle">
+        <section class="external-search-card" aria-labelledby="companySearchTitle">
           <div class="external-search-copy">
-            <span class="source-badge">IR BANK</span>
+            <span class="source-badge">J-QUANTS</span>
             <div>
-              <h2 id="irbankSearchTitle">実在する企業を調べる</h2>
-              <p>証券コードまたは社名から、IR BANKの企業情報を検索します。</p>
+              <h2 id="companySearchTitle">実在する企業を分析する</h2>
+              <p>JPX公式データから、配当・財務・収益の5軸スコアを算出します。</p>
             </div>
           </div>
-          <form class="external-search-form" action="https://irbank.net/search" method="get" target="_blank" rel="noopener external">
-            <label class="sr-only" for="irbankQuery">証券コード、社名</label>
+          <form class="external-search-form company-analysis-form">
+            <label class="sr-only" for="companyQuery">証券コード、社名</label>
             <span aria-hidden="true">⌕</span>
-            <input id="irbankQuery" name="query" type="search" placeholder="例：7203、トヨタ自動車" autocomplete="off" required />
-            <button type="submit">IR BANKで検索 <b aria-hidden="true">↗</b></button>
+            <input id="companyQuery" name="query" type="search" placeholder="例：7203、トヨタ自動車" autocomplete="off" required />
+            <button type="submit">企業分析する <b aria-hidden="true">→</b></button>
           </form>
-          <p class="external-search-note">検索結果は外部サイトで開きます。掲載情報の利用条件はIR BANKに準じます。</p>
+          <p class="external-search-note">データ出典：J-Quants API V2　<a href="https://irbank.net/" target="_blank" rel="noopener">IR BANKで確認 ↗</a></p>
         </section>
 
         <div class="metric-grid" id="metricGrid"></div>
@@ -136,6 +137,67 @@
         </div>
       </section>
 
+      <section class="page view" id="analysisView">
+        <div class="simple-page-heading analysis-page-heading">
+          <p class="eyebrow">OFFICIAL DATA ANALYSIS</p>
+          <h1>数字の裏側まで、<em>確かめる。</em></h1>
+          <p>JPX公式の株価・決算データを使い、長期配当投資の観点から企業を評価します。</p>
+        </div>
+
+        <form class="analysis-search-bar company-analysis-form">
+          <span aria-hidden="true">⌕</span>
+          <label class="sr-only" for="analysisQuery">証券コードまたは社名</label>
+          <input id="analysisQuery" name="query" type="search" placeholder="証券コードまたは社名を入力" autocomplete="off" required>
+          <button type="submit">分析する <b aria-hidden="true">→</b></button>
+        </form>
+
+        <div class="analysis-setup" id="analysisSetup" hidden>
+          <span class="setup-mark">!</span>
+          <div><strong>実データ接続の準備が必要です</strong><p id="analysisSetupMessage">ローカルサーバーにJ-Quants APIキーを設定してください。</p><a href="https://jpx-jquants.com/" target="_blank" rel="noopener">J-QuantsでAPIキーを取得 ↗</a></div>
+        </div>
+
+        <div class="search-candidates" id="searchCandidates" hidden></div>
+
+        <div class="analysis-loading" id="analysisLoading" hidden>
+          <span class="loading-ring"></span><strong>公式データを分析しています</strong><small>株価・決算・配当実績を照合中</small>
+        </div>
+
+        <div class="analysis-empty" id="analysisEmpty">
+          <div class="analysis-empty-visual"><span>配当</span><i></i><span>財務</span><i></i><span>成長</span></div>
+          <h2>証券コードか社名を入力してください</h2>
+          <p>最初は「7203」のような4桁の証券コードがおすすめです。</p>
+        </div>
+
+        <div class="analysis-dashboard" id="analysisDashboard" hidden>
+          <div class="analysis-identity-row">
+            <div class="analysis-company"><span class="analysis-company-mark" id="analysisCompanyMark">—</span><div><span class="analysis-source">J-QUANTS VERIFIED DATA</span><h2 id="analysisCompanyName">—</h2><p id="analysisCompanyMeta">—</p></div></div>
+            <div class="analysis-total"><span>総合スコア</span><strong id="analysisTotalScore">—</strong><small id="analysisGrade">—</small></div>
+          </div>
+
+          <div class="analysis-key-metrics" id="analysisKeyMetrics"></div>
+
+          <div class="analysis-main-grid">
+            <section class="analysis-score-card">
+              <div class="analysis-section-heading"><div><span class="section-kicker">SCORE BREAKDOWN</span><h2>5つの評価軸</h2></div><span class="confidence-badge" id="analysisConfidence">—</span></div>
+              <div class="analysis-score-list" id="analysisScoreList"></div>
+            </section>
+
+            <section class="analysis-judgement-card">
+              <span class="section-kicker">ASSESSMENT</span><h2>今回の評価</h2>
+              <div class="judgement-label" id="analysisJudgement">—</div>
+              <p id="analysisSummary">—</p>
+              <div class="analysis-alert"><strong>確認したいポイント</strong><p id="analysisCaution">—</p></div>
+            </section>
+          </div>
+
+          <section class="analysis-history-card">
+            <div class="analysis-section-heading"><div><span class="section-kicker">FINANCIAL HISTORY</span><h2>業績・配当の推移</h2></div><span id="analysisUpdatedAt" class="updated-at">—</span></div>
+            <div class="analysis-table-wrap"><table class="analysis-history-table"><thead><tr><th>決算期</th><th>売上高</th><th>営業利益</th><th>純利益</th><th>EPS</th><th>年間配当</th><th>配当性向</th><th>自己資本比率</th></tr></thead><tbody id="analysisHistoryRows"></tbody></table></div>
+            <p class="analysis-disclaimer">本スコアは公開データを一定の計算式で整理した参考情報であり、投資助言や将来成果の保証ではありません。欠損値・会計基準・データ配信遅延により比較できない場合があります。</p>
+          </section>
+        </div>
+      </section>
+
       <section class="page view" id="watchlistView">
         <div class="simple-page-heading"><p class="eyebrow">WATCHLIST</p><h1>気になる銘柄を、<em>じっくり観察。</em></h1><p>候補を並べて、利回りだけでなく配当余力と財務を比較できます。</p></div>
         <div class="watch-grid" id="watchGrid"></div>
@@ -174,6 +236,7 @@
   </div>
 
   <div class="toast" id="toast" role="status"></div>
+  <script src="analysis.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

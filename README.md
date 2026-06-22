@@ -1,6 +1,6 @@
 # Dividend Compass
 
-長期保有向けの高配当株候補を、利回りだけでなく配当持続性・増配力・財務健全性・収益安定性・割安度から確認する、日本語のフロントエンドMVPです。
+長期保有向けの高配当株候補を、利回りだけでなく配当持続性・増配力・財務健全性・収益安定性・割安度から確認する、日本語の投資リサーチMVPです。
 
 <p align="center">
   <a href="https://ooken-korekara.github.io/dividend-compass/">
@@ -10,18 +10,32 @@
 
 ## 起動方法
 
-依存パッケージはありません。`index.html` をブラウザで開くか、ローカルサーバーを起動してください。
+デモ画面だけを見る場合は `index.html` をブラウザで開けます。
+
+J-Quantsの実データ分析を使う場合は、[J-Quants API](https://jpx-jquants.com/)でAPIキーを発行し、`.env.example` を `.env` へコピーしてキーを設定します。
+
+```env
+JQUANTS_API_KEY=取得したAPIキー
+```
+
+その後、依存パッケージ不要のローカルサーバーを起動します。
 
 ```bash
-python3 -m http.server 8000
+python3 server.py
 ```
 
 その後 `http://localhost:8000` を開きます。
 
+APIキーは `.gitignore` 対象の `.env` に保存され、ブラウザやGitHubへ配信されません。GitHub Pages版は安全上、実データ分析を無効にしています。
+
+J-Quants APIは個人利用向けサービスです。このバックエンドをインターネットへ公開したり、取得した生データを第三者へ再配布したりしないでください。利用前にJ-Quantsの最新の契約条件を確認してください。
+
 ## 主な機能
 
 - 高配当株スクリーニング
-- IR BANKで証券コード・社名検索
+- J-Quantsで証券コード・社名検索
+- 株価・決算サマリーを使った5軸の実データ分析
+- 評価根拠、データ充足度、確認ポイントの表示
 - 独自の5軸・100点評価
 - 銘柄詳細とリスク表示
 - ウォッチリスト（ブラウザ内に保存）
@@ -32,11 +46,21 @@ python3 -m http.server 8000
 
 現在の全銘柄・指標はUI検証用の架空データです。実際の投資判断には使用できません。実運用時は、財務・株価・配当履歴の正規データをバックエンドで取得し、更新日と出典を各指標に表示してください。
 
-「実在する企業を調べる」検索は、入力した証券コードまたは社名を [IR BANK](https://irbank.net/) の検索結果へ送信します。IR BANKのデータを本リポジトリへ複製・保存する機能ではありません。
+「実在する企業を分析する」機能は、JPX公式のJ-Quants API V2から取得した銘柄マスター、株価、決算サマリーを使います。IR BANKは外部確認リンクとしてのみ利用し、同サイトのデータを自動取得・複製・分析しません。
 
-実データ化の第一候補は、JPX公式の [J-Quants API](https://www.jpx.co.jp/markets/other-data-services/j-quants-api/index.html) です。上場銘柄一覧、調整済み株価、四半期財務、配当の決定・予想をまとめて取得できます。より長期の開示書類を検証する場合は、金融庁の [EDINET API](https://disclosure2dl.edinet-fsa.go.jp/guide/static/disclosure/WZEK0110.html) を補助データ源にします。減配・増配など最新の会社発表を追う用途では、JPXの [TDnet](https://www.jpx.co.jp/equities/listing/disclosure/tdnet/index.html) を併用します。
+実データ源は、JPX公式の [J-Quants API](https://www.jpx.co.jp/markets/other-data-services/j-quants-api/index.html) です。無料プランでも銘柄マスター、株価、決算サマリーを利用できますが、配信遅延・取得期間・項目は契約プランにより異なります。より長期の開示書類を検証する場合は、金融庁の [EDINET API](https://disclosure2dl.edinet-fsa.go.jp/guide/static/disclosure/WZEK0110.html) を補助データ源として追加できます。
 
 APIキーはブラウザへ置かず、バックエンドの環境変数で管理してください。銘柄ごとに「株価基準日」「決算期」「データ更新日時」「出典」を表示し、予想値と実績値を混在させない設計が必要です。
+
+## 実データスコア
+
+- 配当持続性 25%: 配当性向、営業CFプラス率
+- 増配力 20%: 年間DPSのCAGR、取得期間内の非減配年数
+- 財務健全性 20%: 自己資本比率、営業CFプラス率
+- 収益安定性 20%: 純利益・営業CFの黒字率
+- 割安度 15%: 予想配当利回り、概算PER
+
+欠損値は中立値で補完し、別途「データ充足度」を表示します。銀行・保険・REITなど、業種固有の財務構造は現時点の共通スコアへ十分に反映されません。
 
 ## スコア設計（案）
 
